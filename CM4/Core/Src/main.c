@@ -160,18 +160,59 @@ int main(void)
 	  uint8_t tx_buf[2] = {0x80, 0x55};
 	  uint8_t rx_buf[2] = {0x00, 0x00};
 
-	  HAL_SPI_TransmitReceive(&hspi1, tx_buf, rx_buf, 2, 100);
-
-	  printf("Sent: [0x%02X, 0x%02X] | Received: [0x%02X, 0x%02X]\r\n",
-			 tx_buf[0], tx_buf[1], rx_buf[0], rx_buf[1]);
+	  HAL_StatusTypeDef status = HAL_SPI_TransmitReceive(&hspi4, tx_buf, rx_buf, 2, 100);
+	  printf("Status: %d | Sent: [0x%02X, 0x%02X] | Received: [0x%02X, 0x%02X]\r\n",
+	         status, tx_buf[0], tx_buf[1], rx_buf[0], rx_buf[1]);
 
 	  HAL_Delay(1000);
+
+	  printf("I2C2 Bus Scan:\r\n");
+
+	  for (uint16_t addr = 0x01; addr < 0x78; addr++) {
+	      HAL_StatusTypeDef result = HAL_I2C_IsDeviceReady(&hi2c2, (addr << 1), 1, 10);
+	      if (result == HAL_OK) {
+	          printf("  Found device at 0x%02X\r\n", addr);
+	      }
+	  }
+
+	  printf("Scan complete.\r\n\r\n");
+	  HAL_Delay(3000);
+
+	  printf("I2C4 Bus Scan:\r\n");
+
+	  for (uint16_t addr = 0x01; addr < 0x78; addr++) {
+	      HAL_StatusTypeDef result = HAL_I2C_IsDeviceReady(&hi2c4, (addr << 1), 1, 10);
+	      if (result == HAL_OK) {
+	          printf("  Found device at 0x%02X\r\n", addr);
+	      }
+	  }
+
+	  printf("Scan complete.\r\n\r\n");
+	  HAL_Delay(3000);
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CKPER;
+  PeriphClkInitStruct.CkperClockSelection = RCC_CLKPSOURCE_HSI;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
@@ -337,7 +378,7 @@ static void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
@@ -361,7 +402,11 @@ static void MX_SPI1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI1_Init 2 */
-
+  hspi1.Init.CRCPolynomial = 0x7;
+  HAL_StatusTypeDef spi_status = HAL_SPI_Init(&hspi1);
+//  printf("SPI1 Init result: %d\r\n", spi_status);
+//  printf("SPI1 State: 0x%02X\r\n", hspi1.State);
+//  printf("SPI1 ErrorCode: 0x%08lX\r\n", hspi1.ErrorCode);
   /* USER CODE END SPI1_Init 2 */
 
 }
@@ -385,7 +430,7 @@ static void MX_SPI2_Init(void)
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi2.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
@@ -409,7 +454,8 @@ static void MX_SPI2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI2_Init 2 */
-
+  hspi2.Init.CRCPolynomial = 0x7;
+  HAL_SPI_Init(&hspi2);
   /* USER CODE END SPI2_Init 2 */
 
 }
@@ -433,7 +479,7 @@ static void MX_SPI4_Init(void)
   hspi4.Instance = SPI4;
   hspi4.Init.Mode = SPI_MODE_MASTER;
   hspi4.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi4.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi4.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi4.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi4.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi4.Init.NSS = SPI_NSS_SOFT;
@@ -457,7 +503,8 @@ static void MX_SPI4_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI4_Init 2 */
-
+  hspi4.Init.CRCPolynomial = 0x7;
+  HAL_SPI_Init(&hspi4);
   /* USER CODE END SPI4_Init 2 */
 
 }

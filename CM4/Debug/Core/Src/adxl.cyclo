@@ -1,0 +1,5 @@
+../Core/Src/adxl.c:11:6:ADXL_Init	6
+../Core/Src/adxl.c:42:6:ADXL_ReadAccelerometer	2
+../Core/Src/adxl.c:70:13:writeRegister	1
+../Core/Src/adxl.c:80:16:readRegister	1
+../Core/Src/adxl.c:93:26:readMultipleRegisters	2
