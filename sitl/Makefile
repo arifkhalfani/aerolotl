@@ -13,6 +13,8 @@ INCLUDES := \
 
 SRC := \
 	src/main.c \
+	src/kalman.c \
+	src/physics_sim.c \
 	$(KERNEL_DIR)/tasks.c \
 	$(KERNEL_DIR)/queue.c \
 	$(KERNEL_DIR)/list.c \
@@ -23,7 +25,7 @@ SRC := \
 	$(KERNEL_DIR)/portable/ThirdParty/GCC/Posix/utils/wait_for_event.c
 
 CFLAGS  := -Wall -Wextra -O0 -g -pthread $(INCLUDES)
-LDFLAGS := -pthread
+LDFLAGS := -pthread -lm
 
 all: $(BIN)
 
