@@ -15,6 +15,9 @@ SRC := \
 	src/main.c \
 	src/kalman.c \
 	src/physics_sim.c \
+	src/sim_world.c \
+	src/accel_sim.c \
+	src/baro_sim.c \
 	$(KERNEL_DIR)/tasks.c \
 	$(KERNEL_DIR)/queue.c \
 	$(KERNEL_DIR)/list.c \
